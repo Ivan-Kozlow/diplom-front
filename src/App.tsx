@@ -3,15 +3,13 @@ import { useForm } from 'react-hook-form'
 
 import { formService } from './services/form'
 
-export type TypeFormFields = {
-	id: string
-}
+import type { TypeGetFormFields } from './types/form'
 
 function App() {
-	const { register, handleSubmit, formState } = useForm<TypeFormFields>()
+	const { register, handleSubmit, formState } = useForm<TypeGetFormFields>()
 
 	const onSubmit = handleSubmit((data) => {
-		formService.getForm(data.id)
+		formService.getDescription(data.id)
 	})
 
 	return (
