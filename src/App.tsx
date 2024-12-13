@@ -1,35 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { useForm } from 'react-hook-form'
+
+import { formService } from './services/form'
+
+export type TypeFormFields = {
+	id: string
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+	const { register, handleSubmit, formState } = useForm<TypeFormFields>()
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	const onSubmit = handleSubmit((data) => {
+		formService.getForm(data.id)
+	})
+
+	return (
+		<form className='flex gap-5 flex-col' onSubmit={onSubmit}>
+			<div className='flex flex-col items-start gap-1'>
+				<input className='rounded-md h-8 p-2' type='text' {...register('id', { required: true })} />
+				{formState.errors.id && <span className='text-red-400 text-sm'>Это поле обязательно</span>}
+			</div>
+			<button>Получить данные</button>
+		</form>
+	)
 }
 
 export default App
