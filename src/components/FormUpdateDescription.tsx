@@ -10,7 +10,7 @@ import { Modal } from './modal'
 
 import type { TypeFormUpdateDescriptionFields } from '../constants/types'
 export const FormUpdateDescription: FC = () => {
-	const { register, handleSubmit, formState } = useForm<TypeFormUpdateDescriptionFields>()
+	const { register, handleSubmit, formState, getValues } = useForm<TypeFormUpdateDescriptionFields>()
 	const { mutate, isError, data, isSuccess } = useMutation({
 		mutationKey: [QUERY_KEYS.updateDescription],
 		mutationFn: (data: TypeFormUpdateDescriptionFields) => formService.updateDescription(data),
@@ -18,7 +18,10 @@ export const FormUpdateDescription: FC = () => {
 	})
 
 	useLayoutEffect(() => {
-		if (isError) toast.error('Ошибка при создании данных, проверьте их правильность')
+		if (isError)
+			toast.error(`Метка с id "${getValues('id')}" не найдена`, {
+				duration: 5000,
+			})
 		if (data?.description === undefined) return
 		if (isSuccess) toast.success('Описание успешно создано', { duration: 1400 })
 	}, [data?.description, isError, isSuccess])

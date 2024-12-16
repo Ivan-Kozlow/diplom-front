@@ -17,7 +17,8 @@ export const FormCreateDescription: FC = () => {
 	})
 
 	useLayoutEffect(() => {
-		if (isError) toast.error('Ошибка при создании данных, проверьте их правильность')
+		if (isError)
+			toast.error('Ошибка при создании, возможно метка с таким id уже существует', { duration: 5000 })
 		if (data?.description === undefined) return
 		if (isSuccess) toast.success('Описание успешно создано', { duration: 1400 })
 	}, [data?.description, isError, isSuccess])
