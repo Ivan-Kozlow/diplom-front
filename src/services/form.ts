@@ -14,7 +14,23 @@ export const formService = {
 		return (await axios.get<IResponse>(`${API}/description/${id}`)).data
 	},
 
-	async createDescription(description: TypeFormCreateDescriptionFields['description']) {
-		return (await axios.post<IResponse>(`${API}/description`, { description })).data
+	async createDescription({
+		id,
+		description,
+	}: {
+		id: TypeFormCreateDescriptionFields['id']
+		description: TypeFormCreateDescriptionFields['description']
+	}) {
+		return (await axios.post<IResponse>(`${API}/description/${id}`, { description })).data
+	},
+
+	async updateDescription({
+		id,
+		description,
+	}: {
+		id: TypeFormGetDescriptionFields['id']
+		description: string
+	}) {
+		return (await axios.patch<IResponse>(`${API}/description/${id}`, { description })).data
 	},
 }

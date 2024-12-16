@@ -6,13 +6,14 @@ import { useMutation } from '@tanstack/react-query'
 import { formService } from '../services/form'
 import { QUERY_KEYS } from '../constants/api'
 
-import type { TypeFormCreateDescriptionFields } from '../constants/types'
+import { Modal } from './modal'
 
-export const FormCreateDescription: FC = () => {
-	const { register, handleSubmit, formState } = useForm<TypeFormCreateDescriptionFields>()
+import type { TypeFormUpdateDescriptionFields } from '../constants/types'
+export const FormUpdateDescription: FC = () => {
+	const { register, handleSubmit, formState } = useForm<TypeFormUpdateDescriptionFields>()
 	const { mutate, isError, data, isSuccess } = useMutation({
-		mutationKey: [QUERY_KEYS.createDescription],
-		mutationFn: (data: TypeFormCreateDescriptionFields) => formService.createDescription(data),
+		mutationKey: [QUERY_KEYS.updateDescription],
+		mutationFn: (data: TypeFormUpdateDescriptionFields) => formService.updateDescription(data),
 		retry: false,
 	})
 
@@ -26,7 +27,9 @@ export const FormCreateDescription: FC = () => {
 		const { description, id } = fields
 		if (description.trim() === '') toast.error('Введите описание', { duration: 1400 })
 		else if (id.trim() === '') toast.error('Введите id', { duration: 1400 })
-		else mutate({ id, description })
+		else {
+			if (window.confirm('Вы уверены что хотите обновить описание?')) mutate({ id, description })
+		}
 	})
 
 	return (
@@ -57,6 +60,8 @@ export const FormCreateDescription: FC = () => {
 
 				{data?.description && <p>{data.description}</p>}
 			</form>
+
+			<Modal />
 		</>
 	)
 }
