@@ -1,25 +1,37 @@
 import './App.css'
-import { useForm } from 'react-hook-form'
+import { useState } from 'react'
 
-import { formService } from './services/form'
+import { cn } from './utils/styles'
 
-import type { TypeGetFormFields } from './types/form'
+import { FormGetDescription } from './components/FormGetDescription'
+import { FormCreateDescription } from './components/FormCreateDescription'
 
 function App() {
-	const { register, handleSubmit, formState } = useForm<TypeGetFormFields>()
-
-	const onSubmit = handleSubmit((data) => {
-		formService.getDescription(data.id)
-	})
+	const [activeForm, setActiveForm] = useState<'get' | 'create'>('get')
 
 	return (
-		<form className='flex gap-5 flex-col' onSubmit={onSubmit}>
-			<div className='flex flex-col items-start gap-1'>
-				<input className='rounded-md h-8 p-2' type='text' {...register('id', { required: true })} />
-				{formState.errors.id && <span className='text-red-400 text-sm'>Это поле обязательно</span>}
+		<div>
+			<div className='flex gap-2 mb-7'>
+				<button
+					className={cn('bg-transparent', {
+						'text-gray-100 bg-gray-700 drop-shadow-md': activeForm === 'get',
+					})}
+					onClick={() => setActiveForm('get')}
+				>
+					Получить данные
+				</button>
+				<button
+					className={cn('bg-transparent', {
+						'text-gray-100 bg-gray-700 drop-shadow-md': activeForm === 'create',
+					})}
+					onClick={() => setActiveForm('create')}
+				>
+					Создать описание
+				</button>
 			</div>
-			<button>Получить данные</button>
-		</form>
+
+			{activeForm === 'get' ? <FormGetDescription /> : <FormCreateDescription />}
+		</div>
 	)
 }
 
