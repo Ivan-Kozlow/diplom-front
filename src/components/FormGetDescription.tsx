@@ -9,7 +9,7 @@ import { QUERY_KEYS } from '../constants/api'
 import type { TypeFormGetDescriptionFields } from '../constants/types'
 
 export const FormGetDescription: FC = () => {
-	const { register, handleSubmit, formState, getValues } = useForm<TypeFormGetDescriptionFields>()
+	const { register, handleSubmit, formState, getValues, setValue } = useForm<TypeFormGetDescriptionFields>()
 	const isFirstRender = useRef(true)
 	const { isError, data, isSuccess, refetch } = useQuery({
 		queryKey: [QUERY_KEYS.getDescription],
@@ -27,14 +27,17 @@ export const FormGetDescription: FC = () => {
 			return
 		}
 
-		if (isError)
+		if (isError) {
 			toast.error(
-				'Описание под таким id не найдено.\nПроверьте корректность id или создайте новое описание',
+				`Описание под таким id не найдено.\nМожете создать описание\nдля метки "${getValues('id')}"`,
 				{ duration: 5000 }
 			)
+			setValue('id', '')
+			return
+		}
 		if (data?.description === undefined) return
 		if (isSuccess) toast.success('Данные успешно получены', { duration: 1400 })
-	}, [data?.description, isError, isSuccess])
+	}, [data?.description, getValues, isError, isSuccess, setValue])
 
 	const onSubmit = handleSubmit((fields) => {
 		if (fields.id.trim() === '') toast.error('Введите id', { duration: 1400 })
@@ -55,7 +58,7 @@ export const FormGetDescription: FC = () => {
 				</div>
 				<button>Получить</button>
 
-				{data?.description && !isFirstRender.current && <p>{data.description}</p>}
+				{data?.description && !isFirstRender.current && !isError && <p>{data.description}</p>}
 			</form>
 		</>
 	)
