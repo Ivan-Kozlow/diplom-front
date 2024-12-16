@@ -56,7 +56,7 @@ export const FormUpdateDescription: FC = () => {
 						<span className='text-red-400 text-sm'>Это поле обязательно</span>
 					)}
 				</div>
-				<button>Создать</button>
+				<button>Обновить</button>
 
 				{data?.description && <p>{data.description}</p>}
 			</form>
