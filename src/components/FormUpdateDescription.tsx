@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
-import { FC, useLayoutEffect } from 'react'
+import { FC, useEffect, useLayoutEffect, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 
 import { formService } from '../services/form'
@@ -10,29 +10,53 @@ import { Modal } from './modal'
 
 import type { TypeFormUpdateDescriptionFields } from '../constants/types'
 export const FormUpdateDescription: FC = () => {
-	const { register, handleSubmit, formState, getValues } = useForm<TypeFormUpdateDescriptionFields>()
-	const { mutate, isError, data, isSuccess } = useMutation({
+	const [isShowModal, setIsShowModal] = useState(false)
+	const { register, handleSubmit, formState, getValues, setFocus } =
+		useForm<TypeFormUpdateDescriptionFields>()
+	const { mutate, data } = useMutation({
 		mutationKey: [QUERY_KEYS.updateDescription],
 		mutationFn: (data: TypeFormUpdateDescriptionFields) => formService.updateDescription(data),
 		retry: false,
-	})
-
-	useLayoutEffect(() => {
-		if (isError)
+		onError() {
 			toast.error(`Метка с id "${getValues('id')}" не найдена`, {
 				duration: 5000,
 			})
-		if (data?.description === undefined) return
-		if (isSuccess) toast.success('Описание успешно создано', { duration: 1400 })
-	}, [data?.description, isError, isSuccess])
+		},
+		onSuccess() {
+			setIsShowModal(false)
+			if (data?.description === undefined) return
+			toast.success('Описание успешно создано', { duration: 1400 })
+		},
+	})
+
+	useLayoutEffect(() => {
+		setFocus('id')
+	}, [isShowModal])
+
+	useEffect(() => {
+		const abortController = new AbortController()
+
+		if (isShowModal) {
+			document.addEventListener(
+				'keydown',
+				(e) => {
+					if (e.key === 'Escape') setIsShowModal(false)
+				},
+				{ signal: abortController.signal }
+			)
+		}
+
+		return () => {
+			abortController.abort()
+		}
+	}, [isShowModal])
 
 	const onSubmit = handleSubmit((fields) => {
 		const { description, id } = fields
+
 		if (description.trim() === '') toast.error('Введите описание', { duration: 1400 })
 		else if (id.trim() === '') toast.error('Введите id', { duration: 1400 })
-		else {
-			if (window.confirm('Вы уверены что хотите обновить описание?')) mutate({ id, description })
-		}
+		else setIsShowModal(true)
 	})
 
 	return (
@@ -64,7 +88,24 @@ export const FormUpdateDescription: FC = () => {
 				{data?.description && <p>{data.description}</p>}
 			</form>
 
-			<Modal />
+			<Modal
+				show={isShowModal}
+				text='Вы уверены что хотите обновить описание?'
+				ButtonsRender={() => (
+					<div className='flex gap-2'>
+						<button
+							autoFocus={isShowModal}
+							className='bg-green-500'
+							onClick={() => mutate({ id: getValues('id'), description: getValues('description') })}
+						>
+							Обновить
+						</button>
+						<button className='bg-red-600' onClick={() => setIsShowModal(false)}>
+							Отменить
+						</button>
+					</div>
+				)}
+			/>
 		</>
 	)
 }
