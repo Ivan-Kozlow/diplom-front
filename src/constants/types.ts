@@ -1,9 +1,11 @@
-export type TypeFormGetDescriptionFields = {
+interface IBase {
 	id: string
 }
+
+export type TypeFormGetDescriptionFields = IBase
+
 export type TypeFormCreateDescriptionFields = {
-	id: string
 	description: string
-}
+} & IBase
 
 export type TypeFormUpdateDescriptionFields = TypeFormCreateDescriptionFields
