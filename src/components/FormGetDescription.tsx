@@ -11,7 +11,7 @@ import type { TypeFormGetDescriptionFields } from '../constants/types'
 export const FormGetDescription: FC = () => {
 	const { register, handleSubmit, formState, getValues, setValue } = useForm<TypeFormGetDescriptionFields>()
 	const isFirstRender = useRef(true)
-	const { isError, data, isSuccess, refetch } = useQuery({
+	const { isError, data, isSuccess, refetch, isFetching } = useQuery({
 		queryKey: [QUERY_KEYS.getDescription],
 		queryFn: () => formService.getDescription(getValues('id')),
 		enabled: false,
@@ -19,6 +19,7 @@ export const FormGetDescription: FC = () => {
 		refetchOnWindowFocus: false,
 		refetchOnMount: false,
 		refetchOnReconnect: false,
+		gcTime: 0,
 	})
 
 	useLayoutEffect(() => {
@@ -26,6 +27,7 @@ export const FormGetDescription: FC = () => {
 			isFirstRender.current = false
 			return
 		}
+		if (isFetching) return
 
 		if (isError) {
 			toast.error(
@@ -37,7 +39,7 @@ export const FormGetDescription: FC = () => {
 		}
 		if (data?.description === undefined) return
 		if (isSuccess) toast.success('Данные успешно получены', { duration: 1400 })
-	}, [data?.description, getValues, isError, isSuccess, setValue])
+	}, [data?.description, isError, isSuccess, getValues, setValue, isFetching])
 
 	const onSubmit = handleSubmit((fields) => {
 		if (fields.id.trim() === '') toast.error('Введите id', { duration: 1400 })
@@ -58,7 +60,9 @@ export const FormGetDescription: FC = () => {
 				</div>
 				<button>Получить</button>
 
-				{data?.description && !isFirstRender.current && !isError && <p>{data.description}</p>}
+				{data?.description && isSuccess && !isFirstRender.current && !isError && (
+					<p>{data.description}</p>
+				)}
 			</form>
 		</>
 	)
