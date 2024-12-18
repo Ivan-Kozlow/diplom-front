@@ -21,7 +21,7 @@ function App() {
 
 	const buttonComponent = (text: string, activeButton: TypeActiveForm) => (
 		<button
-			className={cn('bg-transparent', {
+			className={cn('bg-transparent p-2 sm:p-3', {
 				'text-gray-100 bg-gray-700 drop-shadow-md': activeForm === activeButton,
 			})}
 			onClick={() => setActiveForm(activeButton)}
