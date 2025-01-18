@@ -1,14 +1,17 @@
+import { CSSTransition } from 'react-transition-group'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
-import { FC, useLayoutEffect } from 'react'
+import { FC, useLayoutEffect, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 
 import { formService } from '../services/form'
 import { QUERY_KEYS } from '../constants/api'
 
-import type { TypeFormCreateDescriptionFields } from '../constants/types'
+import { defaultStyle, fadeDelayForShow, fadeTimeout, transitionStyles } from './fadeStyles'
 
+import type { TypeFormCreateDescriptionFields } from '../constants/types'
 export const FormCreateDescription: FC = () => {
+	const [isShow, setIsShow] = useState(false)
 	const { register, handleSubmit, formState } = useForm<TypeFormCreateDescriptionFields>()
 	const { mutate, isError, data, isSuccess } = useMutation({
 		mutationKey: [QUERY_KEYS.createDescription],
@@ -17,6 +20,11 @@ export const FormCreateDescription: FC = () => {
 	})
 
 	useLayoutEffect(() => {
+		setTimeout(() => {
+			console.log('isShow', isShow)
+			setIsShow(true)
+		}, fadeDelayForShow)
+
 		if (isError)
 			toast.error('Ошибка при создании, возможно метка с таким id уже существует', { duration: 5000 })
 		if (data?.description === undefined) return
@@ -31,33 +39,44 @@ export const FormCreateDescription: FC = () => {
 	})
 
 	return (
-		<>
-			<form className='flex gap-3 flex-col max-w-[250px] mx-auto' onSubmit={onSubmit}>
-				<div className='flex flex-col items-start gap-1'>
-					<input
-						autoFocus
-						className='rounded-md h-8 p-4 h-12 w-full truncate'
-						type='text'
-						placeholder='Введите id метки'
-						{...register('id', { required: true })}
-					/>
-					{formState.errors.id && <span className='text-red-400 text-sm'>Это поле обязательно</span>}
-				</div>
-				<div className='flex flex-col items-start gap-1'>
-					<input
-						className='rounded-md h-8 p-4 h-12 w-full truncate'
-						type='text'
-						placeholder='Введите описание для метки'
-						{...register('description', { required: true })}
-					/>
-					{formState.errors.description && (
-						<span className='text-red-400 text-sm'>Это поле обязательно</span>
-					)}
-				</div>
-				<button>Создать</button>
+		<CSSTransition in={isShow} timeout={fadeTimeout}>
+			{(state) => (
+				<div
+					style={{
+						...defaultStyle,
+						...transitionStyles[state],
+					}}
+				>
+					<form className='h-[134px] flex gap-3 flex-col max-w-[250px] mx-auto' onSubmit={onSubmit}>
+						<div className='flex flex-col items-start gap-1'>
+							<input
+								autoFocus
+								className='rounded-md h-8 p-4 h-12 w-full truncate'
+								type='text'
+								placeholder='Введите id метки'
+								{...register('id', { required: true })}
+							/>
+							{formState.errors.id && (
+								<span className='text-red-400 text-sm'>Это поле обязательно</span>
+							)}
+						</div>
+						<div className='flex flex-col items-start gap-1'>
+							<input
+								className='rounded-md h-8 p-4 h-12 w-full truncate'
+								type='text'
+								placeholder='Введите описание для метки'
+								{...register('description', { required: true })}
+							/>
+							{formState.errors.description && (
+								<span className='text-red-400 text-sm'>Это поле обязательно</span>
+							)}
+						</div>
+						<button>Создать</button>
 
-				{data?.description && <p>{data.description}</p>}
-			</form>
-		</>
+						{data?.description && <p>{data.description}</p>}
+					</form>
+				</div>
+			)}
+		</CSSTransition>
 	)
 }
