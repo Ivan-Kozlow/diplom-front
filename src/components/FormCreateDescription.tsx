@@ -5,15 +5,16 @@ import { FC, useLayoutEffect, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 
 import { formService } from '../services/form'
-import { QUERY_KEYS } from '../constants/api'
+import { QUERY_KEYS, errorCatch } from '../constants/api'
 
 import { defaultStyle, fadeDelayForShow, fadeTimeout, transitionStyles } from './fadeStyles'
 
 import type { TypeFormCreateDescriptionFields } from '../constants/types'
+
 export const FormCreateDescription: FC = () => {
 	const [isShow, setIsShow] = useState(false)
 	const { register, handleSubmit, formState } = useForm<TypeFormCreateDescriptionFields>()
-	const { mutate, isError, data, isSuccess } = useMutation({
+	const { mutate, error, data, isPending, isSuccess } = useMutation({
 		mutationKey: [QUERY_KEYS.createDescription],
 		mutationFn: (data: TypeFormCreateDescriptionFields) => formService.createDescription(data),
 		retry: false,
@@ -21,20 +22,21 @@ export const FormCreateDescription: FC = () => {
 
 	useLayoutEffect(() => {
 		setTimeout(() => {
-			console.log('isShow', isShow)
 			setIsShow(true)
 		}, fadeDelayForShow)
 
-		if (isError)
-			toast.error('Ошибка при создании, возможно метка с таким id уже существует', { duration: 5000 })
+		if (error)
+			toast.error(errorCatch(error) || 'Ошибка при создании, возможно метка с таким id уже существует', {
+				duration: 5000,
+			})
 		if (data?.description === undefined) return
 		if (isSuccess) toast.success('Описание успешно создано', { duration: 1400 })
-	}, [data?.description, isError, isSuccess])
+	}, [data?.description, error, isSuccess])
 
 	const onSubmit = handleSubmit((fields) => {
 		const { description, id } = fields
 		if (description.trim() === '') toast.error('Введите описание', { duration: 1400 })
-		else if (id.trim() === '') toast.error('Введите id', { duration: 1400 })
+		else if (id.trim() === '') toast.error('Введите корректный id', { duration: 1400 })
 		else mutate({ id, description })
 	})
 
@@ -71,7 +73,13 @@ export const FormCreateDescription: FC = () => {
 								<span className='text-red-400 text-sm'>Это поле обязательно</span>
 							)}
 						</div>
-						<button>Создать</button>
+
+						<button
+							className='disabled:bg-slate-200/15 disabled:text-gray-200/50 disabled:border-0 disabled:cursor-not-allowed'
+							disabled={isPending}
+						>
+							Создать
+						</button>
 
 						{data?.description && <p>{data.description}</p>}
 					</form>

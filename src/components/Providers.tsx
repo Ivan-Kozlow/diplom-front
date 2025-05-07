@@ -1,4 +1,5 @@
 import { Toaster } from 'react-hot-toast'
+import { CookiesProvider } from 'react-cookie'
 import { FC, PropsWithChildren } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -8,7 +9,7 @@ export const Providers: FC<PropsWithChildren> = ({ children }) => {
 	return (
 		<>
 			<QueryClientProvider client={queryClient}>
-				{children}
+				<CookiesProvider>{children}</CookiesProvider>
 				<Toaster position='top-center' />
 			</QueryClientProvider>
 		</>

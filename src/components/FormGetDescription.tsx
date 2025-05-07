@@ -28,7 +28,6 @@ export const FormGetDescription: FC = () => {
 
 	useLayoutEffect(() => {
 		setTimeout(() => {
-			console.log('isShow', isShow)
 			setIsShow(true)
 		}, fadeDelayForShow)
 
@@ -39,19 +38,17 @@ export const FormGetDescription: FC = () => {
 		if (isFetching) return
 
 		if (isError) {
-			toast.error(
-				`Описание под таким id не найдено.\nМожете создать описание\nдля метки "${getValues('id')}"`,
-				{ duration: 5000 }
-			)
+			toast.error(`Метка с названием "${getValues('id')}" не найдена.`, {
+				duration: 5000,
+			})
 			setValue('id', '')
 			return
 		}
-		if (data?.description === undefined) return
 		if (isSuccess) toast.success('Данные успешно получены', { duration: 1400 })
-	}, [data?.description, isError, isSuccess, getValues, setValue, isFetching])
+	}, [isError, isSuccess, getValues, setValue, isFetching])
 
 	const onSubmit = handleSubmit((fields) => {
-		if (fields.id.trim() === '') toast.error('Введите id', { duration: 1400 })
+		if (fields.id.trim() === '') toast.error('Введите корректный id', { duration: 1400 })
 		else refetch()
 	})
 
@@ -76,10 +73,14 @@ export const FormGetDescription: FC = () => {
 								<span className='text-red-400 text-sm'>Это поле обязательно</span>
 							)}
 						</div>
-						<button>Получить</button>
-
-						{data?.description && isSuccess && !isFirstRender.current && !isError && (
-							<p>{data.description}</p>
+						<button
+							className='disabled:bg-slate-200/15 disabled:text-gray-200/50 disabled:border-0 disabled:cursor-not-allowed'
+							disabled={isFetching}
+						>
+							Получить
+						</button>
+						{data?.description && !isFirstRender.current && !isError && (
+							<p key={data?.id}>{data.description}</p>
 						)}
 					</form>
 				</div>

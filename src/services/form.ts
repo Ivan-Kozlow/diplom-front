@@ -1,17 +1,19 @@
-import axios from 'axios'
+import { instance } from '../constants/axios'
 
 import type { TypeFormCreateDescriptionFields, TypeFormGetDescriptionFields } from '../constants/types'
 
 interface IResponse {
-	id: string
+	created_at: Date
 	description: string
+	id: number
+	uid: string
 }
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export const formService = {
 	async getDescription(id: TypeFormGetDescriptionFields['id']) {
-		return (await axios.get<IResponse>(`${API}/description/${id}`)).data
+		return (await instance.get<IResponse>(`${API}/description/${id}`)).data
 	},
 
 	async createDescription({
@@ -21,7 +23,7 @@ export const formService = {
 		id: TypeFormCreateDescriptionFields['id']
 		description: TypeFormCreateDescriptionFields['description']
 	}) {
-		return (await axios.post<IResponse>(`${API}/description/${id}`, { description })).data
+		return (await instance.post<IResponse>(`${API}/description/${id}`, { description })).data
 	},
 
 	async updateDescription({
@@ -31,6 +33,6 @@ export const formService = {
 		id: TypeFormGetDescriptionFields['id']
 		description: string
 	}) {
-		return (await axios.patch<IResponse>(`${API}/description/${id}`, { description })).data
+		return (await instance.patch<IResponse>(`${API}/description/${id}`, { description })).data
 	},
 }
