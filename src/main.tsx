@@ -1,9 +1,10 @@
 import './index.css'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 
 import { EnumUserRole } from './services/auth.type.ts'
 
+import { RedirectIfAuth } from './RedirectIfAuth.tsx'
 import { ProtectedRoutes } from './ProtectedAuth.tsx'
 import { PUBLIC_PAGES } from './config/pages.ts'
 import RegisterPage from './components/register/Register.tsx'
@@ -17,35 +18,50 @@ export const ROUTES = { main: '/', auth: '/auth', adminPanel: '/admin-panel', re
 
 export const router = createBrowserRouter([
 	{
-		element: <ProtectedRoutes roles={EnumUserRole.ADMIN} />,
 		errorElement: <ErrorPage />,
 		children: [
 			{
-				path: ROUTES.adminPanel,
-				element: <AdminPanel />,
+				element: <ProtectedRoutes roles={[EnumUserRole.ADMIN]} />,
+				children: [
+					{
+						path: ROUTES.adminPanel,
+						element: <AdminPanel />,
+					},
+				],
+			},
+
+			{
+				element: <ProtectedRoutes roles={[EnumUserRole.ADMIN]} />,
+				children: [
+					{
+						path: ROUTES.register,
+						element: <RegisterPage />,
+					},
+				],
 			},
 			{
-				path: ROUTES.register,
-				element: <RegisterPage />,
+				element: <ProtectedRoutes />,
+				children: [
+					{
+						path: ROUTES.main,
+						element: <App />,
+					},
+				],
 			},
-		],
-	},
-	{
-		element: <ProtectedRoutes />,
-		children: [
 			{
-				path: ROUTES.main,
-				element: <App />,
+				element: <RedirectIfAuth />,
+				children: [
+					{
+						path: PUBLIC_PAGES.LOGIN,
+						element: <LoginPage />,
+					},
+				],
+			},
+			{
+				path: '*',
+				element: <Navigate to={ROUTES.main} replace />,
 			},
 		],
-	},
-	{
-		path: PUBLIC_PAGES.LOGIN,
-		element: <LoginPage />,
-	},
-	{
-		path: '*',
-		element: <ProtectedRoutes />,
 	},
 ])
 

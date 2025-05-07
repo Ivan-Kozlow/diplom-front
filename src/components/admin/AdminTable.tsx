@@ -1,5 +1,7 @@
 import type { FC } from 'react'
 import type { EnumUserRole } from '../../services/auth.type'
+import { useProfile } from '../../hooks/useProfile'
+
 import { AdminTableRow } from './AdminTableRow'
 
 type TypeProps = {
@@ -11,6 +13,8 @@ type TypeProps = {
 }
 
 export const AdminTable: FC<{ users: TypeProps[] }> = ({ users }) => {
+	const { user } = useProfile()
+
 	return (
 		<table className='table-auto w-full'>
 			<thead>
@@ -26,6 +30,7 @@ export const AdminTable: FC<{ users: TypeProps[] }> = ({ users }) => {
 			<tbody>
 				{users
 					.sort((a, d) => a.id - d.id)
+					.sort((a, b) => (a.id === user.id ? -1 : b.id === user.id ? 1 : 0))
 					.map((user) => (
 						<AdminTableRow key={user.id} user={user} />
 					))}
