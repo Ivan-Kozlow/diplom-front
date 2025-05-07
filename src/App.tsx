@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import { cn } from './utils/styles'
 
+import { Header } from './components/Header'
 import { FormUpdateDescription } from './components/FormUpdateDescription'
 import { FormGetDescription } from './components/FormGetDescription'
 import { FormCreateDescription } from './components/FormCreateDescription'
@@ -32,13 +33,15 @@ function App() {
 
 	return (
 		<div>
-			<div className='flex gap-2 mb-7'>
-				{buttonComponent('Получить описание', 'get')}
-				{buttonComponent('Создать описание', 'create')}
-				{buttonComponent('Обновить описание', 'update')}
+			<Header />
+			<div>
+				<div className='flex gap-2 mb-7'>
+					{buttonComponent('Получить описание', 'get')}
+					{buttonComponent('Создать описание', 'create')}
+					{buttonComponent('Обновить описание', 'update')}
+				</div>
+				<FormComponent />
 			</div>
-
-			<FormComponent />
 		</div>
 	)
 }

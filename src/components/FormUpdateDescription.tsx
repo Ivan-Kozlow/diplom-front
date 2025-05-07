@@ -17,19 +17,20 @@ export const FormUpdateDescription: FC = () => {
 	const [isShowModal, setIsShowModal] = useState(false)
 	const { register, handleSubmit, formState, getValues, setFocus } =
 		useForm<TypeFormUpdateDescriptionFields>()
-	const { mutate, data } = useMutation({
+	const { mutate, isPending, data } = useMutation({
 		mutationKey: [QUERY_KEYS.updateDescription],
 		mutationFn: (data: TypeFormUpdateDescriptionFields) => formService.updateDescription(data),
 		retry: false,
 		onError() {
+			setIsShowModal(false)
 			toast.error(`Метка с id "${getValues('id')}" не найдена`, {
 				duration: 5000,
 			})
 		},
-		onSuccess() {
+		onSuccess(data) {
 			setIsShowModal(false)
 			if (data?.description === undefined) return
-			toast.success('Описание успешно создано', { duration: 1400 })
+			toast.success('Описание успешно обновлено', { duration: 1400 })
 		},
 	})
 
@@ -39,7 +40,6 @@ export const FormUpdateDescription: FC = () => {
 
 	useEffect(() => {
 		setTimeout(() => {
-			console.log('isShow', isShow)
 			setIsShow(true)
 		}, fadeDelayForShow)
 
@@ -64,7 +64,7 @@ export const FormUpdateDescription: FC = () => {
 		const { description, id } = fields
 
 		if (description.trim() === '') toast.error('Введите описание', { duration: 1400 })
-		else if (id.trim() === '') toast.error('Введите id', { duration: 1400 })
+		else if (id.trim() === '') toast.error('Введите корректный id', { duration: 1400 })
 		else setIsShowModal(true)
 	})
 
@@ -101,7 +101,12 @@ export const FormUpdateDescription: FC = () => {
 								<span className='text-red-400 text-sm'>Это поле обязательно</span>
 							)}
 						</div>
-						<button>Обновить</button>
+						<button
+							className='disabled:bg-slate-200/15 disabled:text-gray-200/50 disabled:border-0 disabled:cursor-not-allowed'
+							disabled={isPending}
+						>
+							Обновить
+						</button>
 
 						{data?.description && <p>{data.description}</p>}
 					</form>
@@ -115,7 +120,10 @@ export const FormUpdateDescription: FC = () => {
 									autoFocus={isShowModal}
 									className='bg-green-500'
 									onClick={() =>
-										mutate({ id: getValues('id'), description: getValues('description') })
+										mutate({
+											id: getValues('id'),
+											description: getValues('description'),
+										})
 									}
 								>
 									Обновить
