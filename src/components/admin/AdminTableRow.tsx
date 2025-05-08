@@ -283,15 +283,15 @@ export const AdminTableRow: FC<{ user: TypeTableData }> = ({ user }) => {
 				text={`Вы уверены что хотите удалить пользователя ${user.name}?`}
 				ButtonsRender={() => (
 					<div className='flex gap-4'>
+						<button className='bg-green-500 text-white' onClick={() => setIsShowModal(false)}>
+							Отменить
+						</button>
 						<button
 							autoFocus={isShowModal}
 							className='bg-red-600/85 text-white'
 							onClick={() => deleteUser(user.id.toString())}
 						>
 							Удалить
-						</button>
-						<button className='bg-green-500 text-white' onClick={() => setIsShowModal(false)}>
-							Отменить
 						</button>
 					</div>
 				)}
