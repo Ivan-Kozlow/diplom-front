@@ -6,7 +6,7 @@ import { getAccessToken, removeFromStorage } from '../services/auth'
 
 import { errorCatch, getContentType } from './api'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4200'
 
 const axiosOptions: CreateAxiosDefaults = {
 	baseURL: API_URL,
