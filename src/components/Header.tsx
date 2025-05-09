@@ -9,7 +9,6 @@ import { useProfile } from '../hooks/useProfile'
 import { QUERY_KEYS } from '../constants/api'
 
 import { ROUTES } from '../main'
-import { PUBLIC_PAGES } from '../config/pages'
 
 export const Header: FC<{ forAdminPage?: boolean }> = ({ forAdminPage }) => {
 	const navigate = useNavigate()
@@ -19,7 +18,7 @@ export const Header: FC<{ forAdminPage?: boolean }> = ({ forAdminPage }) => {
 		mutationFn: authService.logout,
 		onSuccess() {
 			startTransition(() => {
-				window.location.replace(PUBLIC_PAGES.LOGIN)
+				window.location.replace(ROUTES.main)
 			})
 		},
 	})
