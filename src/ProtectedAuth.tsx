@@ -11,7 +11,6 @@ export const ProtectedRoutes = ({ roles = [EnumUserRole.USER] }: { roles?: EnumU
 	const { user, isFetching } = useProfile()
 
 	if (isFetching) return <div>Loading...</div>
-
 	if (!user?.isLoggedIn) {
 		setTimeout(() => toast('Требуется авторизация', { icon: 'ℹ️' }), 400)
 		return <Navigate to={PUBLIC_PAGES.LOGIN} replace />
