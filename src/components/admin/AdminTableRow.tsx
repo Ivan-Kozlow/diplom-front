@@ -58,7 +58,7 @@ export const AdminTableRow: FC<{ user: TypeTableData }> = ({ user }) => {
 		defaultValues: getDefaultValues(user),
 	})
 
-	const { mutate: updateUser } = useMutation({
+	const { mutate: updateUser, isPending } = useMutation({
 		mutationKey: [QUERY_KEYS.updateProfile],
 		mutationFn: (data: Partial<Omit<TypeTableData, 'createdAt'>>) =>
 			userService.update(data, user.id.toString()),
@@ -141,15 +141,6 @@ export const AdminTableRow: FC<{ user: TypeTableData }> = ({ user }) => {
 			value: role,
 			label: role,
 		}))
-	// const options1 = Object.values(EnumUserRole)
-	// 	.filter((role) => {
-	// 		const currentValues = getValues().roles?.map(() => (r: { value: EnumUserRole }) => r.value) || []
-	// 		return !currentValues.includes(role)
-	// 	})
-	// 	.map((role) => ({
-	// 		value: role,
-	// 		label: role,
-	// 	}))
 
 	return (
 		<tr>
@@ -263,7 +254,7 @@ export const AdminTableRow: FC<{ user: TypeTableData }> = ({ user }) => {
 				<button
 					type='submit'
 					className='bg-blue-500 p-2 rounded text-white disabled:bg-gray-400 disabled:text-gray-300 disabled:cursor-not-allowed transition-colors duration-200'
-					disabled={!Object.values(dirtyFields).length}
+					disabled={!Object.values(dirtyFields).length || isPending}
 					onClick={handleSubmit((data) => onSubmit({ ...data, id: user.id }))}
 				>
 					Обновить
