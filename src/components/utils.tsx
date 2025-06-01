@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 
 import type { IResponse } from '../services/form.service'
 
-export const renderBookValues = (value: IResponse) => {
+export const renderBookValues = (value: Partial<IResponse>) => {
 	return (
 		<div className='flex flex-col items-start'>
 			<p>
