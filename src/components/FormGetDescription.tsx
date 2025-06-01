@@ -4,20 +4,21 @@ import { useForm } from 'react-hook-form'
 import { FC, useLayoutEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 
-import { formService } from '../services/form'
+import { renderBookValues } from './utils'
+import { formService } from '../services/form.service'
 import { QUERY_KEYS } from '../constants/api'
 
 import { defaultStyle, fadeDelayForShow, fadeTimeout, transitionStyles } from './fadeStyles'
 
-import type { TypeFormGetDescriptionFields } from '../constants/types'
-
+import type { TypeFormDeleteDescriptionFields } from '../constants/types'
 export const FormGetDescription: FC = () => {
 	const [isShow, setIsShow] = useState(false)
-	const { register, handleSubmit, formState, getValues, setValue } = useForm<TypeFormGetDescriptionFields>()
+	const { register, handleSubmit, formState, getValues, setValue } =
+		useForm<TypeFormDeleteDescriptionFields>()
 	const isFirstRender = useRef(true)
 	const { isError, data, isSuccess, refetch, isFetching } = useQuery({
 		queryKey: [QUERY_KEYS.getDescription],
-		queryFn: () => formService.getDescription(getValues('id')),
+		queryFn: () => formService.getBook(getValues('id')),
 		enabled: false,
 		retry: false,
 		refetchOnWindowFocus: false,
@@ -38,7 +39,7 @@ export const FormGetDescription: FC = () => {
 		if (isFetching) return
 
 		if (isError) {
-			toast.error(`Метка с названием "${getValues('id')}" не найдена.`, {
+			toast.error(`Книга под id "${getValues('id')}" не найдена.`, {
 				duration: 5000,
 			})
 			setValue('id', '')
@@ -66,7 +67,7 @@ export const FormGetDescription: FC = () => {
 							<input
 								className='rounded-md h-8 p-4 h-12 w-full truncate'
 								type='text'
-								placeholder='Введите id метки'
+								placeholder='Введите id книги'
 								{...register('id', { required: true })}
 							/>
 							{formState.errors.id && (
@@ -79,9 +80,7 @@ export const FormGetDescription: FC = () => {
 						>
 							Получить
 						</button>
-						{data?.description && !isFirstRender.current && !isError && (
-							<p key={data?.id}>{data.description}</p>
-						)}
+						{data?.author && !isFirstRender.current && !isError && renderBookValues(data)}
 					</form>
 				</div>
 			)}
