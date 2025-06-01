@@ -3,9 +3,18 @@ interface IBase {
 }
 
 export type TypeFormGetDescriptionFields = IBase
+export type TypeFormDeleteDescriptionFields = IBase
 
 export type TypeFormCreateDescriptionFields = {
-	description: string
+	book_name: string
+	author: string
+	year_created: string
+	book_genre: string
+	publisher: string
 } & IBase
 
-export type TypeFormUpdateDescriptionFields = TypeFormCreateDescriptionFields
+export type TypeFormUpdateDescriptionFields = {
+	id: TypeFormGetDescriptionFields['id']
+	recipient: string
+	checkout_date: string
+}

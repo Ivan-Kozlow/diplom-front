@@ -2,21 +2,25 @@ import './App.css'
 import { useState } from 'react'
 
 import { cn } from './utils/styles'
+import { useProfile } from './hooks/useProfile'
 
 import { Header } from './components/Header'
 import { FormUpdateDescription } from './components/FormUpdateDescription'
 import { FormGetDescription } from './components/FormGetDescription'
+import { FormDeleteDescription } from './components/FormDeleteDescription'
 import { FormCreateDescription } from './components/FormCreateDescription'
 
-type TypeActiveForm = 'get' | 'create' | 'update'
+type TypeActiveForm = 'get' | 'create' | 'update' | 'delete'
 
 function App() {
 	const [activeForm, setActiveForm] = useState<TypeActiveForm>('get')
+	const user = useProfile()
 
 	const formComponents: Record<TypeActiveForm, React.FC> = {
 		get: FormGetDescription,
 		create: FormCreateDescription,
 		update: FormUpdateDescription,
+		delete: FormDeleteDescription,
 	}
 	const FormComponent = formComponents[activeForm]
 
@@ -36,9 +40,10 @@ function App() {
 			<Header />
 			<div>
 				<div className='flex gap-2 mb-7'>
-					{buttonComponent('Получить описание', 'get')}
-					{buttonComponent('Создать описание', 'create')}
-					{buttonComponent('Обновить описание', 'update')}
+					{buttonComponent('Получить книгу', 'get')}
+					{user && user.user?.isAdmin && buttonComponent('Создать книгу', 'create')}
+					{buttonComponent('Обновить книгу', 'update')}
+					{user && user.user?.isAdmin && buttonComponent('Удалить книгу', 'delete')}
 				</div>
 				<FormComponent />
 			</div>

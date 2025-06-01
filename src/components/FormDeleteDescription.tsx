@@ -10,28 +10,27 @@ import { QUERY_KEYS } from '../constants/api'
 
 import { Modal } from './modal'
 import { defaultStyle, fadeDelayForShow, fadeTimeout, transitionStyles } from './fadeStyles'
-import dayjs from 'dayjs'
 
-import type { TypeFormUpdateDescriptionFields } from '../constants/types'
+import type { TypeFormDeleteDescriptionFields } from '../constants/types'
 
-export const FormUpdateDescription: FC = () => {
+export const FormDeleteDescription: FC = () => {
 	const [isShow, setIsShow] = useState(false)
 	const [isShowModal, setIsShowModal] = useState(false)
 	const { register, handleSubmit, formState, getValues, setFocus } =
-		useForm<TypeFormUpdateDescriptionFields>()
+		useForm<TypeFormDeleteDescriptionFields>()
 	const { mutate, isPending, data } = useMutation({
 		mutationKey: [QUERY_KEYS.updateDescription],
-		mutationFn: (data: TypeFormUpdateDescriptionFields) => formService.updateBook(data),
+		mutationFn: (data: TypeFormDeleteDescriptionFields) => formService.deleteBook(data.id),
 		retry: false,
 		onError() {
 			setIsShowModal(false)
-			toast.error(`Книга по id "${getValues('id')}" не найдена`, {
+			toast.error(`Книга с id "${getValues('id')}" не найдена`, {
 				duration: 5000,
 			})
 		},
 		onSuccess() {
 			setIsShowModal(false)
-			toast.success('Книга успешно обновлена', { duration: 1400 })
+			toast.success('Книга успешно удалена', { duration: 1400 })
 		},
 	})
 
@@ -61,14 +60,10 @@ export const FormUpdateDescription: FC = () => {
 		}
 	}, [isShowModal])
 
-	const isValidDate = dayjs(getValues('checkout_date')).isValid()
-
 	const onSubmit = handleSubmit((fields) => {
-		const { id, checkout_date } = fields
+		const { id } = fields
 
 		if (id.trim() === '') toast.error('Введите корректный id', { duration: 1400 })
-		else if (checkout_date && !isValidDate)
-			toast.error('Дата не корректна формату YYYY.MM.DD', { duration: 1400 })
 		else setIsShowModal(true)
 	})
 
@@ -94,32 +89,7 @@ export const FormUpdateDescription: FC = () => {
 								<span className='text-red-400 text-sm'>Это поле обязательно</span>
 							)}
 						</div>
-						<div className='flex flex-col items-start gap-1'>
-							<input
-								className='rounded-md h-8 p-4 h-12 w-full truncate'
-								type='text'
-								placeholder='Введите получателя'
-								{...register('recipient')}
-							/>
-							{formState.errors.recipient && (
-								<span className='text-red-400 text-sm'>Это поле обязательно</span>
-							)}
-						</div>
-						<div className='flex flex-col items-start gap-1'>
-							<input
-								className='rounded-md h-8 p-4 h-12 w-full truncate'
-								type='text'
-								placeholder='Введите дату выдачи'
-								{...register('checkout_date', {
-									value: dayjs().format('YYYY.MM.DD'),
-								})}
-							/>
-							{formState.errors.checkout_date && !isValidDate ? (
-								<span className='text-red-400 text-sm'>
-									Формат даты неверен - должно быть YYYY.MM.DD
-								</span>
-							) : null}
-						</div>
+
 						<button
 							className='disabled:bg-slate-200/15 disabled:text-gray-200/50 disabled:border-0 disabled:cursor-not-allowed'
 							disabled={isPending}
@@ -139,11 +109,8 @@ export const FormUpdateDescription: FC = () => {
 									autoFocus={isShowModal}
 									className='bg-green-500'
 									onClick={() =>
-										isValidDate &&
 										mutate({
 											id: getValues('id'),
-											recipient: getValues('recipient'),
-											checkout_date: dayjs(getValues('checkout_date')).toISOString(),
 										})
 									}
 								>
