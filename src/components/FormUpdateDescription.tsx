@@ -139,12 +139,13 @@ export const FormUpdateDescription: FC = () => {
 									autoFocus={isShowModal}
 									className='bg-green-500'
 									onClick={() =>
-										isValidDate &&
-										mutate({
-											id: getValues('id'),
-											recipient: getValues('recipient'),
-											checkout_date: dayjs(getValues('checkout_date')).toISOString(),
-										})
+										getValues('checkout_date') && !isValidDate
+											? toast.error('Дата не корректна формату YYYY.MM.DD', { duration: 1400 })
+											: mutate({
+													id: getValues('id'),
+													recipient: getValues('recipient'),
+													checkout_date: dayjs(getValues('checkout_date')).toISOString(),
+											  })
 									}
 								>
 									Обновить
