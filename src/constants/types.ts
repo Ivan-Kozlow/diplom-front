@@ -17,4 +17,4 @@ export type TypeFormUpdateDescriptionFields = {
 	id: TypeFormGetDescriptionFields['id']
 	recipient: string
 	checkout_date: string
-}
+} & TypeFormCreateDescriptionFields

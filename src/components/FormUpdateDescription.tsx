@@ -6,6 +6,7 @@ import { useMutation } from '@tanstack/react-query'
 
 import { renderBookValues } from './utils'
 import { formService } from '../services/form.service'
+import { useProfile } from '../hooks/useProfile'
 import { QUERY_KEYS } from '../constants/api'
 
 import { Modal } from './modal'
@@ -15,6 +16,7 @@ import dayjs from 'dayjs'
 import type { TypeFormUpdateDescriptionFields } from '../constants/types'
 
 export const FormUpdateDescription: FC = () => {
+	const user = useProfile()
 	const [isShow, setIsShow] = useState(false)
 	const [isShowModal, setIsShowModal] = useState(false)
 	const { register, handleSubmit, formState, getValues, setFocus } =
@@ -94,6 +96,70 @@ export const FormUpdateDescription: FC = () => {
 								<span className='text-red-400 text-sm'>Это поле обязательно</span>
 							)}
 						</div>
+						{user.user.isAdmin && (
+							<>
+								<div className='flex flex-col items-start gap-1'>
+									<input
+										className='rounded-md h-8 p-4 h-12 w-full truncate'
+										type='text'
+										placeholder='Введите автора'
+										{...register('author', { required: true })}
+									/>
+									{formState.errors.author && (
+										<span className='text-red-400 text-sm'>Это поле обязательно</span>
+									)}
+								</div>
+								<div className='flex flex-col items-start gap-1'>
+									<input
+										className='rounded-md h-8 p-4 h-12 w-full truncate'
+										type='text'
+										placeholder='Введите жанр'
+										{...register('book_genre', { required: true })}
+									/>
+									{formState.errors.book_genre && (
+										<span className='text-red-400 text-sm'>Это поле обязательно</span>
+									)}
+								</div>
+								<div className='flex flex-col items-start gap-1'>
+									<input
+										className='rounded-md h-8 p-4 h-12 w-full truncate'
+										type='text'
+										placeholder='Введите название'
+										{...register('book_name', { required: true })}
+									/>
+									{formState.errors.book_name && (
+										<span className='text-red-400 text-sm'>Это поле обязательно</span>
+									)}
+								</div>
+								<div className='flex flex-col items-start gap-1'>
+									<input
+										className='rounded-md h-8 p-4 h-12 w-full truncate'
+										type='text'
+										placeholder='Введите издателя'
+										{...register('publisher', { required: true })}
+									/>
+									{formState.errors.publisher && (
+										<span className='text-red-400 text-sm'>Это поле обязательно</span>
+									)}
+								</div>
+								<div className='flex flex-col items-start gap-1'>
+									<input
+										className='rounded-md h-8 p-4 h-12 w-full truncate'
+										type='text'
+										placeholder='Введите дату издания'
+										{...register('year_created', { required: true })}
+									/>
+									{formState.errors.year_created ? (
+										<span className='text-red-400 text-sm'>Это поле обязательно</span>
+									) : null}
+									{getValues('year_created') && !isValidDate ? (
+										<span className='text-red-400 text-sm'>
+											Дата не соответствует формату YYYY.MM.DD
+										</span>
+									) : null}
+								</div>
+							</>
+						)}
 						<div className='flex flex-col items-start gap-1'>
 							<input
 								className='rounded-md h-8 p-4 h-12 w-full truncate'
@@ -145,6 +211,11 @@ export const FormUpdateDescription: FC = () => {
 													id: getValues('id'),
 													recipient: getValues('recipient'),
 													checkout_date: dayjs(getValues('checkout_date')).toISOString(),
+													year_created: dayjs(getValues('year_created')).toISOString(),
+													book_genre: getValues('book_genre'),
+													publisher: getValues('publisher'),
+													book_name: getValues('book_name'),
+													author: getValues('author'),
 											  })
 									}
 								>
