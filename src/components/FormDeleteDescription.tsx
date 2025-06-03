@@ -94,7 +94,7 @@ export const FormDeleteDescription: FC = () => {
 							className='disabled:bg-slate-200/15 disabled:text-gray-200/50 disabled:border-0 disabled:cursor-not-allowed'
 							disabled={isPending}
 						>
-							Обновить
+							Удалить
 						</button>
 
 						{data && renderBookValues(data)}
@@ -102,7 +102,7 @@ export const FormDeleteDescription: FC = () => {
 
 					<Modal
 						show={isShowModal}
-						text='Вы уверены что хотите обновить?'
+						text='Вы уверены что хотите Удалить?'
 						ButtonsRender={() => (
 							<div className='flex gap-2'>
 								<button
@@ -114,7 +114,7 @@ export const FormDeleteDescription: FC = () => {
 										})
 									}
 								>
-									Обновить
+									Удалить
 								</button>
 								<button className='bg-red-600' onClick={() => setIsShowModal(false)}>
 									Отменить
