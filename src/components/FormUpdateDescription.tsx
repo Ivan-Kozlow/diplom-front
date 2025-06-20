@@ -20,7 +20,7 @@ export const FormUpdateDescription: FC = () => {
 	const [isShow, setIsShow] = useState(false)
 	const [isShowModal, setIsShowModal] = useState(false)
 	const { register, handleSubmit, formState, getValues, setFocus } =
-		useForm<TypeFormUpdateDescriptionFields>()
+		useForm<TypeFormUpdateDescriptionFields>({ mode: 'onChange' })
 	const { mutate, isPending, data } = useMutation({
 		mutationKey: [QUERY_KEYS.updateDescription],
 		mutationFn: (data: TypeFormUpdateDescriptionFields) => formService.updateBook(data),
@@ -92,9 +92,6 @@ export const FormUpdateDescription: FC = () => {
 								placeholder='Введите id книги'
 								{...register('id', { required: true })}
 							/>
-							{formState.errors.id && (
-								<span className='text-red-400 text-sm'>Это поле обязательно</span>
-							)}
 						</div>
 						{user.user.isAdmin && (
 							<>
@@ -103,55 +100,40 @@ export const FormUpdateDescription: FC = () => {
 										className='rounded-md h-8 p-4 h-12 w-full truncate'
 										type='text'
 										placeholder='Введите автора'
-										{...register('author', { required: true })}
+										{...register('author')}
 									/>
-									{formState.errors.author && (
-										<span className='text-red-400 text-sm'>Это поле обязательно</span>
-									)}
 								</div>
 								<div className='flex flex-col items-start gap-1'>
 									<input
 										className='rounded-md h-8 p-4 h-12 w-full truncate'
 										type='text'
 										placeholder='Введите жанр'
-										{...register('book_genre', { required: true })}
+										{...register('book_genre')}
 									/>
-									{formState.errors.book_genre && (
-										<span className='text-red-400 text-sm'>Это поле обязательно</span>
-									)}
 								</div>
 								<div className='flex flex-col items-start gap-1'>
 									<input
 										className='rounded-md h-8 p-4 h-12 w-full truncate'
 										type='text'
 										placeholder='Введите название'
-										{...register('book_name', { required: true })}
+										{...register('book_name')}
 									/>
-									{formState.errors.book_name && (
-										<span className='text-red-400 text-sm'>Это поле обязательно</span>
-									)}
 								</div>
 								<div className='flex flex-col items-start gap-1'>
 									<input
 										className='rounded-md h-8 p-4 h-12 w-full truncate'
 										type='text'
 										placeholder='Введите издателя'
-										{...register('publisher', { required: true })}
+										{...register('publisher')}
 									/>
-									{formState.errors.publisher && (
-										<span className='text-red-400 text-sm'>Это поле обязательно</span>
-									)}
 								</div>
 								<div className='flex flex-col items-start gap-1'>
 									<input
 										className='rounded-md h-8 p-4 h-12 w-full truncate'
 										type='text'
 										placeholder='Введите дату издания'
-										{...register('year_created', { required: true })}
+										{...register('year_created')}
 									/>
-									{formState.errors.year_created ? (
-										<span className='text-red-400 text-sm'>Это поле обязательно</span>
-									) : null}
 									{getValues('year_created') && !isValidDate ? (
 										<span className='text-red-400 text-sm'>
 											Дата не соответствует формату YYYY.MM.DD
@@ -167,9 +149,6 @@ export const FormUpdateDescription: FC = () => {
 								placeholder='Введите получателя'
 								{...register('recipient')}
 							/>
-							{formState.errors.recipient && (
-								<span className='text-red-400 text-sm'>Это поле обязательно</span>
-							)}
 						</div>
 						<div className='flex flex-col items-start gap-1'>
 							<input
