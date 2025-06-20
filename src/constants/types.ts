@@ -15,6 +15,6 @@ export type TypeFormCreateDescriptionFields = {
 
 export type TypeFormUpdateDescriptionFields = {
 	id: TypeFormGetDescriptionFields['id']
-	recipient: string
-	checkout_date: string
-} & TypeFormCreateDescriptionFields
+	recipient?: string
+	checkout_date?: string
+} & Partial<TypeFormCreateDescriptionFields>
