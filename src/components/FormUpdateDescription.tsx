@@ -92,6 +92,9 @@ export const FormUpdateDescription: FC = () => {
 								placeholder='Введите id книги'
 								{...register('id', { required: true })}
 							/>
+							{formState.errors.id && (
+								<span className='text-red-400 text-sm'>Это поле обязательно</span>
+							)}
 						</div>
 						{user.user.isAdmin && (
 							<>
