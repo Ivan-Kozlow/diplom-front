@@ -64,6 +64,7 @@ export const FormUpdateDescription: FC = () => {
 	}, [isShowModal])
 
 	const isValidDate = dayjs(getValues('checkout_date')).isValid()
+	const isValidYearCreated = dayjs(getValues('year_created')).isValid()
 
 	const onSubmit = handleSubmit((fields) => {
 		const { id, checkout_date } = fields
@@ -137,7 +138,7 @@ export const FormUpdateDescription: FC = () => {
 										placeholder='Введите дату издания'
 										{...register('year_created')}
 									/>
-									{getValues('year_created') && !isValidDate ? (
+									{getValues('year_created') && !isValidYearCreated ? (
 										<span className='text-red-400 text-sm'>
 											Дата не соответствует формату YYYY.MM.DD
 										</span>
@@ -159,7 +160,9 @@ export const FormUpdateDescription: FC = () => {
 								type='text'
 								placeholder='Введите дату выдачи'
 								{...register('checkout_date', {
-									value: dayjs().format('YYYY.MM.DD'),
+									value: user.user.isAdmin
+										? getValues('checkout_date')
+										: dayjs().format('YYYY.MM.DD'),
 								})}
 							/>
 							{formState.errors.checkout_date && !isValidDate ? (
@@ -187,17 +190,24 @@ export const FormUpdateDescription: FC = () => {
 									autoFocus={isShowModal}
 									className='bg-green-500'
 									onClick={() =>
-										getValues('checkout_date') && !isValidDate
+										(getValues('checkout_date') && !isValidDate) ||
+										(getValues('year_created') && !isValidYearCreated)
 											? toast.error('Дата не корректна формату YYYY.MM.DD', { duration: 1400 })
 											: mutate({
 													id: getValues('id'),
-													recipient: getValues('recipient'),
-													checkout_date: dayjs(getValues('checkout_date')).toISOString(),
-													year_created: dayjs(getValues('year_created')).toISOString(),
-													book_genre: getValues('book_genre'),
-													publisher: getValues('publisher'),
-													book_name: getValues('book_name'),
-													author: getValues('author'),
+													...(getValues('recipient') && { recipient: getValues('recipient') }),
+													...(getValues('checkout_date') && {
+														checkout_date: dayjs(getValues('checkout_date')).toISOString(),
+													}),
+													...(getValues('year_created') && {
+														year_created: dayjs(getValues('year_created')).toISOString(),
+													}),
+													...(getValues('book_genre') && {
+														book_genre: getValues('book_genre'),
+													}),
+													...(getValues('publisher') && { publisher: getValues('publisher') }),
+													...(getValues('book_name') && { book_name: getValues('book_name') }),
+													...(getValues('author') && { author: getValues('author') }),
 											  })
 									}
 								>

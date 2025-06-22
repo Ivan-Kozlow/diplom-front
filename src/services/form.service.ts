@@ -46,8 +46,27 @@ export const formService = {
 		).data
 	},
 
-	async updateBook({ id, recipient, checkout_date }: TypeFormUpdateDescriptionFields) {
-		return (await instance.patch<IResponse>(`${API}/description/${id}`, { recipient, checkout_date })).data
+	async updateBook({
+		id,
+		recipient,
+		checkout_date,
+		author,
+		book_genre,
+		book_name,
+		year_created,
+		publisher,
+	}: TypeFormUpdateDescriptionFields) {
+		return (
+			await instance.patch<IResponse>(`${API}/description/${id}`, {
+				recipient,
+				checkout_date,
+				author,
+				book_genre,
+				book_name,
+				year_created,
+				publisher,
+			})
+		).data
 	},
 	async deleteBook(id: TypeFormDeleteDescriptionFields['id']) {
 		return (await instance.delete<Pick<IResponse, 'id'>>(`${API}/description/${id}`)).data
